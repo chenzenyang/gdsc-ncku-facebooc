@@ -23,13 +23,13 @@
 //     return true;
 // }
 
-/**
+
 static void q_show(queue_t *q)
 {
     for (element_t *e = q->head; e->next; e = e->next)
         printf("%s", e->value);
 }
-*/
+
 
 int main(void)
 {
@@ -40,14 +40,15 @@ int main(void)
     }
 
     queue_t *q = q_new();
-    char buf[256];
-    while (fgets(buf, 256, fp)) {
-        q_insert_head(q, buf);
-    }
-    fclose(fp);
+    // char buf[256];
+    // while (fgets(buf, 256, fp)) {
+    //     q_insert_head(q, buf);
+    // }
+    // fclose(fp);
+    q_show(q);
 
-    q_sort(q);
-    assert(validate(q));
+    // q_sort(q);
+    // assert(validate(q));
     
     q_free(q);
 

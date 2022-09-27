@@ -10,15 +10,14 @@
  */
 queue_t *q_new()
 {
-    queue_t *que_n = (queue_t *) malloc(sizeof(queue_t));
+    queue_t *que = (queue_t *) malloc(sizeof(queue_t));
 
-    if (!que_n) {
-        que_n->head = NULL;
-        que_n->tail = NULL;
-        que_n->size = 0;
-        return que_n;
-    }
-    return NULL;
+    if (!que) return NULL;
+
+    que->head = NULL;
+    que->tail = NULL;
+    que->size = 0;
+    return que;
 }
 
 /* Free all storage used by queue */
@@ -29,7 +28,8 @@ void q_free(queue_t *q)
     element_t *tmp;
     while (q->head != NULL)
     {
-        tmp = q->head;
+        tmp = (q->head)->next;
+        free((q->head)->value);
         free(q->head);
         q->head = tmp;
     }
@@ -46,21 +46,24 @@ void q_free(queue_t *q)
 
 bool q_insert_head(queue_t *q, char *s)
 {
+    int s_len = strlen(s);
+
     if (!q) return false;
 
     element_t *elem = (element_t *) malloc(sizeof(element_t));
     if (!elem) return false;
 
-    elem->value = malloc(sizeof(char) * (strlen(s) + 1));
+    elem->value = (char *) malloc(sizeof(char) * (s_len + 1));
     if (!elem->value) {
         free(elem);
         return false;
     }
-    strcpy(elem->value, s);
+
+    strncpy(elem->value, s, s_len);
     elem->next = q->head;
 
     q->head = elem;
-    if (!elem->next) q->tail = elem;
+    if (!q->tail) q->tail = elem;
     q->size++;
 
     return true;
@@ -75,7 +78,27 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    
+    int s_len = strlen(s);
+
+    if (!q) return false;
+
+    element_t *elem = (element_t *) malloc(sizeof(element_t));
+    if (!elem) return false;
+
+    elem->value = (char *) malloc(sizeof(char) * (s_len + 1));
+    if (!elem->value) {
+        free(elem);
+        return false;
+    }
+
+    strncpy(elem->value, s, s_len);
+    elem->next = NULL;
+
+    (q->tail)->next = elem;
+    q->tail = elem;
+    if (!q->head) q->head = elem;
+    q->size++;
+
     return true;
 }
 
@@ -89,7 +112,17 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    
+    if (!q || !q->head) return false;
+
+    int *dang = memccpy(sp, (q->head)->value, '\0', bufsize - 1);
+    if (dang) return false;
+
+    element_t *tmp = q->head;
+    free((q->head)->value);
+    q->head = (q->head)->next;
+    free(tmp);
+
+    q->size--;
     return true;
 }
 
@@ -99,7 +132,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 size_t q_size(queue_t *q)
 {
-    return -1;
+    if (!q) return -1;
+    
+    return q->size;
 }
 
 /*
@@ -111,7 +146,17 @@ size_t q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
+    if (!q) return;
 
+    element_t *next, *perivous = NULL;
+    q->tail = q->head;
+
+    while (q) {
+        next = (q->head)->next;
+        (q->head)->next = perivous;
+        perivous = q->head;
+        q->head = next;
+    }
 }
 
 /*
