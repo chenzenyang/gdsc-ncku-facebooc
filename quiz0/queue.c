@@ -10,14 +10,30 @@
  */
 queue_t *q_new()
 {
-    
+    queue_t *que_n = (queue_t *) malloc(sizeof(queue_t));
+
+    if (!que_n) {
+        que_n->head = NULL;
+        que_n->tail = NULL;
+        que_n->size = 0;
+        return que_n;
+    }
     return NULL;
 }
 
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
+    if (!q) return;
 
+    element_t *tmp;
+    while (q->head != NULL)
+    {
+        tmp = q->head;
+        free(q->head);
+        q->head = tmp;
+    }
+    free(q);
 }
 
 /*
@@ -30,7 +46,23 @@ void q_free(queue_t *q)
 
 bool q_insert_head(queue_t *q, char *s)
 {
-    
+    if (!q) return false;
+
+    element_t *elem = (element_t *) malloc(sizeof(element_t));
+    if (!elem) return false;
+
+    elem->value = malloc(sizeof(char) * (strlen(s) + 1));
+    if (!elem->value) {
+        free(elem);
+        return false;
+    }
+    strcpy(elem->value, s);
+    elem->next = q->head;
+
+    q->head = elem;
+    if (!elem->next) q->tail = elem;
+    q->size++;
+
     return true;
 }
 
