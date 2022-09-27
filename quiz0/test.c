@@ -40,11 +40,12 @@ int main(void)
     }
 
     queue_t *q = q_new();
-    // char buf[256];
-    // while (fgets(buf, 256, fp)) {
-    //     q_insert_head(q, buf);
-    // }
-    // fclose(fp);
+    char buf[256];
+    while (fgets(buf, 256, fp)) {
+        q_insert_head(q, buf);
+    }
+    fclose(fp);
+
     q_show(q);
 
     // q_sort(q);
