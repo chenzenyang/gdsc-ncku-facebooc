@@ -48,7 +48,7 @@ int main(void)
 
     q_show(q);
 
-    // q_sort(q);
+    q_sort(q);
     // assert(validate(q));
     
     q_free(q);

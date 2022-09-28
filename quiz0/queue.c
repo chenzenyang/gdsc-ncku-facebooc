@@ -25,13 +25,13 @@ void q_free(queue_t *q)
 {
     if (!q) return;
 
-    element_t *temp;
-    while (q->head)
+    element_t *tmp;
+    while (q->head != NULL)
     {
-        temp = q->head;
-        q->head = (q->head)->next;
-        free(temp->value);
-        free(temp);
+        tmp = (q->head)->next;
+        free((q->head)->value);     // 一開始沒注意到此
+        free(q->head);
+        q->head = tmp;
     }
     free(q);
 }
@@ -160,9 +160,22 @@ void q_reverse(queue_t *q)
  */
 void merge_sort(element_t **head)
 {
+    // 沒得比或是自己一個人也不用再去比較
     if (!(*head) || !(*head)->next)
         return;
 
+    queue_t *q = (head + 2);
+    int m = q_size(q->size) / 2;
+    
+    while (m)
+    {
+        *head = (*head)->next;
+        m--;
+    }
+
+    merge_sort(head);
+    q_remove_head();
+    merge_sort();
 }
 
 /*
