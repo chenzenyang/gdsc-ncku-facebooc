@@ -23,13 +23,12 @@ static bool validate(queue_t *q)
     return true;
 }
 
-/**
-static void q_show(queue_t *q)
+/* static void q_show(queue_t *q)
 {
     for (element_t *e = q->head; e->next; e = e->next)
         printf("%s", e->value);
-}
-*/
+} */
+
 
 int main(void)
 {

@@ -10,14 +10,30 @@
  */
 queue_t *q_new()
 {
-    
-    return NULL;
+    queue_t *que = (queue_t *) malloc(sizeof(queue_t));
+
+    if (que) {
+        que->head = NULL;
+        que->tail = NULL;
+        que->size = 0;
+    }
+    return que;
 }
 
 /* Free all storage used by queue */
 void q_free(queue_t *q)
 {
+    if (!q) return;
 
+    element_t *tmp;
+    while (q->head != NULL)
+    {
+        tmp = (q->head)->next;
+        free((q->head)->value);     // 一開始沒注意到此
+        free(q->head);
+        q->head = tmp;
+    }
+    free(q);
 }
 
 /*
@@ -30,7 +46,23 @@ void q_free(queue_t *q)
 
 bool q_insert_head(queue_t *q, char *s)
 {
-    
+    if (!q) return false;
+
+    element_t *elem = (element_t *) malloc(sizeof(element_t));
+    if (!elem) return false;
+
+    elem->value = strdup(s);
+    if (!elem->value) {
+        free(elem);
+        return false;
+    }
+
+    elem->next = q->head;
+
+    q->head = elem;
+    if (!q->tail) q->tail = elem;
+    q->size++;
+
     return true;
 }
 
@@ -43,7 +75,24 @@ bool q_insert_head(queue_t *q, char *s)
  */
 bool q_insert_tail(queue_t *q, char *s)
 {
-    
+    if (!q) return false;
+
+    element_t *elem = (element_t *) malloc(sizeof(element_t));
+    if (!elem) return false;
+
+    elem->value = strdup(s);
+    if (!elem->value) {
+        free(elem);
+        return false;
+    }
+
+    elem->next = NULL;
+
+    if (q->tail) (q->tail)->next = elem;
+    q->tail = elem;
+    if (!q->head) q->head = elem;
+    q->size++;
+
     return true;
 }
 
@@ -57,7 +106,18 @@ bool q_insert_tail(queue_t *q, char *s)
  */
 bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 {
-    
+    if (!q || !q->head) return false;
+
+    int *dang = memccpy(sp, (q->head)->value, '\0', bufsize - 1);
+    if (!dang) return false;
+    sp[bufsize - 1] = '\0';
+
+    element_t *temp = q->head;
+    q->head = (q->head)->next;
+    free(temp->value);
+    free(temp);
+
+    q->size--;
     return true;
 }
 
@@ -67,7 +127,9 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
  */
 size_t q_size(queue_t *q)
 {
-    return -1;
+    if (!q || !q->head) return -1;
+    
+    return q->size;
 }
 
 /*
@@ -79,8 +141,58 @@ size_t q_size(queue_t *q)
  */
 void q_reverse(queue_t *q)
 {
+    if (!(q && q->head && (q->head)->next)) return;
 
+    element_t *next = NULL, *perivous = NULL;
+    q->tail = q->head;
+
+    while (q->head) {
+        next = (q->head)->next;
+        (q->head)->next = perivous;
+        perivous = q->head;
+        q->head = next;
+    }
+    q->head = perivous;
 }
+
+void m_sorted(element_t **head, element_t *l_list, element_t *r_list)
+{
+    element_t *list = NULL;
+    element_t **sorted;
+
+    sorted = &list;
+    while (l_list && r_list) {
+        if (strcmp(l_list->value, r_list->value) < 0) {
+            *sorted = l_list;
+            l_list = l_list->next;
+        } else {
+            *sorted = r_list;
+            r_list = r_list->next;
+        }
+
+        sorted = &(*sorted)->next;
+    }
+
+    *sorted = (l_list ? l_list : r_list);
+    *head = list;
+}
+
+
+void cut_list(element_t *head, element_t **l_list, element_t **r_list)
+{
+    element_t *l_half = head;
+    element_t *r_half = head->next;
+
+    while (r_half && r_half->next) {
+        l_half = l_half->next;
+        r_half = r_half->next->next;
+    }
+
+    *l_list = head;
+    *r_list = l_half->next;
+    l_half->next = NULL;
+}
+
 
 /*
  * The function's sorting algorithm should be merge sort.
@@ -89,7 +201,14 @@ void merge_sort(element_t **head)
 {
     if (!(*head) || !(*head)->next)
         return;
+    
+    element_t *l_list = NULL;
+    element_t *r_list = NULL;
 
+    cut_list(*head, &l_list, &r_list);
+    merge_sort(&r_list);
+    merge_sort(&l_list);
+    m_sorted(head, l_list, r_list);
 }
 
 /*
