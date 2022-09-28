@@ -6,22 +6,22 @@
 
 #include "queue.h"
 
-// static bool validate(queue_t *q)
-// {
-//     for (element_t *e = q->head; e->next; e = e->next) {
-//         if (strcmp(e->value, e->next->value) > 0)
-//             return false;
-//     }
+static bool validate(queue_t *q)
+{
+    for (element_t *e = q->head; e->next; e = e->next) {
+        if (strcmp(e->value, e->next->value) > 0)
+            return false;
+    }
     
-//     q_reverse(q);
+    q_reverse(q);
     
-//     for (element_t *e = q->head; e->next; e = e->next) {
-//         if (strcmp(e->value, e->next->value) < 0)
-//             return false;
-//     }
+    for (element_t *e = q->head; e->next; e = e->next) {
+        if (strcmp(e->value, e->next->value) < 0)
+            return false;
+    }
 
-//     return true;
-// }
+    return true;
+}
 
 
 static void q_show(queue_t *q)
@@ -49,7 +49,7 @@ int main(void)
     q_show(q);
 
     q_sort(q);
-    // assert(validate(q));
+    assert(validate(q));
     
     q_free(q);
 

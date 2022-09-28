@@ -146,7 +146,7 @@ void q_reverse(queue_t *q)
     element_t *next = NULL, *perivous = NULL;
     q->tail = q->head;
 
-    while (q) {
+    while (q->head) {
         next = (q->head)->next;
         (q->head)->next = perivous;
         perivous = q->head;
@@ -155,27 +155,60 @@ void q_reverse(queue_t *q)
     q->head = perivous;
 }
 
+void m_sorted(element_t **head, element_t *l_list, element_t *r_list)
+{
+    element_t *list = NULL;
+    element_t **sorted;
+
+    sorted = &list;
+    while (l_list && r_list) {
+        if (strcmp(l_list->value, r_list->value) < 0) {
+            *sorted = l_list;
+            l_list = l_list->next;
+        } else {
+            *sorted = r_list;
+            r_list = r_list->next;
+        }
+
+        sorted = &(*sorted)->next;
+    }
+
+    *sorted = (l_list ? l_list : r_list);
+    *head = list;
+}
+
+
+void cut_list(element_t *head, element_t **l_list, element_t **r_list)
+{
+    element_t *l_half = head;
+    element_t *r_half = head->next;
+
+    while (r_half && r_half->next) {
+        l_half = l_half->next;
+        r_half = r_half->next->next;
+    }
+
+    *l_list = head;
+    *r_list = l_half->next;
+    l_half->next = NULL;
+}
+
+
 /*
  * The function's sorting algorithm should be merge sort.
  */
 void merge_sort(element_t **head)
 {
-    // 沒得比或是自己一個人也不用再去比較
     if (!(*head) || !(*head)->next)
         return;
-
-    queue_t *q = (head + 2);
-    int m = q_size(q->size) / 2;
     
-    while (m)
-    {
-        *head = (*head)->next;
-        m--;
-    }
+    element_t *l_list = NULL;
+    element_t *r_list = NULL;
 
-    merge_sort(head);
-    q_remove_head();
-    merge_sort();
+    cut_list(*head, &l_list, &r_list);
+    merge_sort(&r_list);
+    merge_sort(&l_list);
+    m_sorted(head, l_list, r_list);
 }
 
 /*
