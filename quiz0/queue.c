@@ -110,7 +110,8 @@ bool q_remove_head(queue_t *q, char *sp, size_t bufsize)
 
     int *dang = memccpy(sp, (q->head)->value, '\0', bufsize - 1);
     if (!dang) return false;
-    sp[bufsize - 1] = '\0';
+    sp[(((char *) dang) - (q->head)->value)] = '\0';
+    // sp[bufsize - 1] = '\0';
 
     element_t *temp = q->head;
     q->head = (q->head)->next;
