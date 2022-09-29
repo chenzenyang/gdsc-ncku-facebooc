@@ -1,5 +1,7 @@
 # facebooc-q0
 
+[Note](https://hackmd.io/@chenzenyang0905/r1cyAFlzs)
+
 Assessing Your C Programming Skills
 
 This lab will give you practice in the style of programming you will need to be able to do proficiently,
