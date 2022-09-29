@@ -117,4 +117,3 @@ void q_reverse(queue_t *q);
  * This function's sorting algorithm should be merge sort.
  */
 void q_sort(queue_t *q);
-
