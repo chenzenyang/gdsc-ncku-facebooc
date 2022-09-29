@@ -163,7 +163,7 @@ void m_sorted(element_t **head, element_t *l_list, element_t *r_list)
 
     sorted = &list;
     while (l_list && r_list) {
-        if (strcmp(l_list->value, r_list->value) < 0) {
+        if (strcmp(l_list->value, r_list->value) <= 0) {
             *sorted = l_list;
             l_list = l_list->next;
         } else {
