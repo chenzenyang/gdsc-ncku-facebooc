@@ -161,8 +161,8 @@ void m_sorted(element_t **head, element_t *l_list, element_t *r_list)
     element_t *list = NULL;
     element_t **sorted = &list;
 
-    for (element_t **lor = NULL, **sorted = &list; (l_list && r_list); *lor = (*lor)->next) {
-        lor = strcmp(l_list->value, r_list->value) ? &r_list : &l_list;
+    for (element_t **lor = NULL; (l_list && r_list); *lor = (*lor)->next) {
+        lor = ((strcmp(l_list->value, r_list->value) <= 0) ? &l_list : &r_list);
         *sorted = *lor;
         sorted = &(*sorted)->next;
     }

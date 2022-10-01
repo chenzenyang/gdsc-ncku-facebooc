@@ -44,9 +44,10 @@ int main(void)
     }
     fclose(fp);
 
-    q_show(q);
-
     q_sort(q);
+
+    q_show(q);
+    
     assert(validate(q));
     
     q_free(q);
