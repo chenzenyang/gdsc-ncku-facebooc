@@ -159,18 +159,11 @@ void q_reverse(queue_t *q)
 void m_sorted(element_t **head, element_t *l_list, element_t *r_list)
 {
     element_t *list = NULL;
-    element_t **sorted;
+    element_t **sorted = &list;
 
-    sorted = &list;
-    while (l_list && r_list) {
-        if (strcmp(l_list->value, r_list->value) <= 0) {
-            *sorted = l_list;
-            l_list = l_list->next;
-        } else {
-            *sorted = r_list;
-            r_list = r_list->next;
-        }
-
+    for (element_t **lor = NULL, **sorted = &list; (l_list && r_list); *lor = (*lor)->next) {
+        lor = strcmp(l_list->value, r_list->value) ? &r_list : &l_list;
+        *sorted = *lor;
         sorted = &(*sorted)->next;
     }
 
